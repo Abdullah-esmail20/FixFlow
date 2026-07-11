@@ -207,7 +207,7 @@ public class MaintenanceRequestService : IMaintenanceRequestService
             return Result.Failure(ex.Message);
         }
     }
-
+    //يعني الفني يشوف الطلبات المسندة له.
     public async Task<Result> ConfirmByCustomerAsync(
         Guid requestId,
         string customerId,
@@ -238,5 +238,37 @@ public class MaintenanceRequestService : IMaintenanceRequestService
         {
             return Result.Failure(ex.Message);
         }
+    }
+
+    public async Task<Result<List<MaintenanceRequestDto>>> GetByTechnicianIdAsync(
+    string technicianId,
+    CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(technicianId))
+            return Result<List<MaintenanceRequestDto>>.Failure("Technician id is required.");
+
+        var requests = await _maintenanceRequestRepository.GetByTechnicianIdAsync(
+            technicianId,
+            cancellationToken);
+
+        var result = requests
+            .Select(request => new MaintenanceRequestDto
+            {
+                Id = request.Id,
+                Title = request.Title,
+                Description = request.Description,
+                CustomerId = request.CustomerId,
+                TechnicianId = request.TechnicianId,
+                ServiceCategoryId = request.ServiceCategoryId,
+                Status = request.Status.ToString(),
+                Priority = request.Priority.ToString(),
+                Location = request.Location,
+                PreferredDate = request.PreferredDate,
+                CreatedAt = request.CreatedAt,
+                UpdatedAt = request.UpdatedAt
+            })
+            .ToList();
+
+        return Result<List<MaintenanceRequestDto>>.Success(result);
     }
 }

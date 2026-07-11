@@ -171,4 +171,25 @@ public class MaintenanceRequestsController : ControllerBase
 
         return NoContent();
     }
+    //يعني الفني يشوف الطلبات المسندة له.
+
+    [HttpGet("my-assigned")]
+    public async Task<IActionResult> GetMyAssignedRequests(
+    [FromHeader(Name = "X-Technician-Id")] string technicianId,
+    CancellationToken cancellationToken)
+    {
+        var result = await _maintenanceRequestService.GetByTechnicianIdAsync(
+            technicianId,
+            cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(new
+            {
+                error = result.Error
+            });
+        }
+
+        return Ok(result.Value);
+    }
 }

@@ -38,4 +38,9 @@ public interface IMaintenanceRequestService
         Guid requestId,
         string customerId,
         CancellationToken cancellationToken = default);
+
+    //يعني الفني يشوف الطلبات المسندة له.
+    Task<Result<List<MaintenanceRequestDto>>> GetByTechnicianIdAsync(
+    string technicianId,
+    CancellationToken cancellationToken = default);
 }
