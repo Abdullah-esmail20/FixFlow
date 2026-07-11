@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="FixFlow.API/FixFlow.API.csproj" />
+  <Project Path="FixFlow.Application/FixFlow.Application.csproj" />
+  <Project Path="FixFlow.Domain/FixFlow.Domain.csproj" />
+  <Project Path="FixFlow.Infrastructure/FixFlow.Infrastructure.csproj" />
+</Solution>

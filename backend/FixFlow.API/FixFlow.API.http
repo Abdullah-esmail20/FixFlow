@@ -1,0 +1,55 @@
+@FixFlow.API_HostAddress = http://localhost:5253
+
+###
+
+GET {{FixFlow.API_HostAddress}}/api/categories
+Accept: application/json
+
+###
+
+POST {{FixFlow.API_HostAddress}}/api/maintenance-requests
+Content-Type: application/json
+X-Customer-Id: customer-1
+
+{
+  "title": "AC is not working",
+  "description": "The air conditioner turns on but does not cool the room.",
+  "serviceCategoryId": "a1fc575d-c11a-4362-84a2-96429d68cbe0",
+  "location": "Building A - Room 203",
+  "preferredDate": "2026-07-15T14:00:00"
+}
+
+###
+
+GET {{FixFlow.API_HostAddress}}/api/maintenance-requests/my-requests
+X-Customer-Id: customer-1
+Accept: application/json
+
+###
+
+PUT {{FixFlow.API_HostAddress}}/api/maintenance-requests/0a8c50ce-96ee-4f1c-a344-22f503a6b572/assign-technician
+Content-Type: application/json
+
+{
+  "technicianId": "technician-1"
+}
+
+###
+
+PUT {{FixFlow.API_HostAddress}}/api/maintenance-requests/0a8c50ce-96ee-4f1c-a344-22f503a6b572/accept
+X-Technician-Id: technician-1
+
+###
+
+PUT {{FixFlow.API_HostAddress}}/api/maintenance-requests/0a8c50ce-96ee-4f1c-a344-22f503a6b572/start-work
+X-Technician-Id: technician-1
+
+###
+
+PUT {{FixFlow.API_HostAddress}}/api/maintenance-requests/0a8c50ce-96ee-4f1c-a344-22f503a6b572/complete
+X-Technician-Id: technician-1
+
+###
+
+PUT {{FixFlow.API_HostAddress}}/api/maintenance-requests/0a8c50ce-96ee-4f1c-a344-22f503a6b572/confirm
+X-Customer-Id: customer-1
