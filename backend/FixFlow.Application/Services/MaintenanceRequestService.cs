@@ -271,4 +271,49 @@ public class MaintenanceRequestService : IMaintenanceRequestService
 
         return Result<List<MaintenanceRequestDto>>.Success(result);
     }
+
+    //يعني عرض تفاصيل طلب واحد.
+    public async Task<Result<MaintenanceRequestDto>> GetByIdAsync(
+    Guid requestId,
+    string? customerId,
+    string? technicianId,
+    CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(customerId) && string.IsNullOrWhiteSpace(technicianId))
+            return Result<MaintenanceRequestDto>.Failure("Customer id or technician id is required.");
+
+        var request = await _maintenanceRequestRepository.GetByIdAsync(
+            requestId,
+            cancellationToken);
+
+        if (request is null)
+            return Result<MaintenanceRequestDto>.Failure("Maintenance request not found.");
+
+        var isCustomerOwner = !string.IsNullOrWhiteSpace(customerId)
+            && request.CustomerId == customerId;
+
+        var isAssignedTechnician = !string.IsNullOrWhiteSpace(technicianId)
+            && request.TechnicianId == technicianId;
+
+        if (!isCustomerOwner && !isAssignedTechnician)
+            return Result<MaintenanceRequestDto>.Failure("You are not allowed to view this request.");
+
+        var result = new MaintenanceRequestDto
+        {
+            Id = request.Id,
+            Title = request.Title,
+            Description = request.Description,
+            CustomerId = request.CustomerId,
+            TechnicianId = request.TechnicianId,
+            ServiceCategoryId = request.ServiceCategoryId,
+            Status = request.Status.ToString(),
+            Priority = request.Priority.ToString(),
+            Location = request.Location,
+            PreferredDate = request.PreferredDate,
+            CreatedAt = request.CreatedAt,
+            UpdatedAt = request.UpdatedAt
+        };
+
+        return Result<MaintenanceRequestDto>.Success(result);
+    }
 }

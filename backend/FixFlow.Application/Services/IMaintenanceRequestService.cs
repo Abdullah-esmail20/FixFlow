@@ -43,4 +43,10 @@ public interface IMaintenanceRequestService
     Task<Result<List<MaintenanceRequestDto>>> GetByTechnicianIdAsync(
     string technicianId,
     CancellationToken cancellationToken = default);
+    //يعني عرض تفاصيل طلب واحد.
+    Task<Result<MaintenanceRequestDto>> GetByIdAsync(
+    Guid requestId,
+    string? customerId,
+    string? technicianId,
+    CancellationToken cancellationToken = default);
 }

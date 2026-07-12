@@ -55,7 +55,19 @@ PUT {{FixFlow.API_HostAddress}}/api/maintenance-requests/0a8c50ce-96ee-4f1c-a344
 X-Customer-Id: customer-1
 
 ###
-
+/////////////////////////////////
 GET {{FixFlow.API_HostAddress}}/api/maintenance-requests/my-assigned
 X-Technician-Id: technician-1
+Accept: application/json
+
+###
+
+GET {{FixFlow.API_HostAddress}}/api/maintenance-requests/0a8c50ce-96ee-4f1c-a344-22f503a6b572
+X-Technician-Id: technician-1
+Accept: application/json
+
+###
+
+GET {{FixFlow.API_HostAddress}}/api/maintenance-requests/0a8c50ce-96ee-4f1c-a344-22f503a6b572
+X-Customer-Id: customer-2
 Accept: application/json

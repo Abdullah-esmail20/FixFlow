@@ -192,4 +192,28 @@ public class MaintenanceRequestsController : ControllerBase
 
         return Ok(result.Value);
     }
+    //يعني عرض تفاصيل طلب واحد.
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(
+    Guid id,
+    [FromHeader(Name = "X-Customer-Id")] string? customerId,
+    [FromHeader(Name = "X-Technician-Id")] string? technicianId,
+    CancellationToken cancellationToken)
+    {
+        var result = await _maintenanceRequestService.GetByIdAsync(
+            id,
+            customerId,
+            technicianId,
+            cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(new
+            {
+                error = result.Error
+            });
+        }
+
+        return Ok(result.Value);
+    }
 }
