@@ -31,7 +31,7 @@ public class MaintenanceRequestService : IMaintenanceRequestService
             cancellationToken);
 
         if (category is null)
-            return Result<Guid>.Failure("Service category not found.");
+            return Result<Guid>.NotFound("Service category not found.");
 
         var request = new MaintenanceRequest(
             dto.Title,
@@ -92,7 +92,7 @@ public class MaintenanceRequestService : IMaintenanceRequestService
             cancellationToken);
 
         if (request is null)
-            return Result.Failure("Maintenance request not found.");
+            return Result.NotFound("Maintenance request not found.");
 
         try
         {
@@ -104,7 +104,7 @@ public class MaintenanceRequestService : IMaintenanceRequestService
         }
         catch (InvalidOperationException ex)
         {
-            return Result.Failure(ex.Message);
+            return Result.Conflict(ex.Message);
         }
         catch (ArgumentException ex)
         {
@@ -125,10 +125,10 @@ public class MaintenanceRequestService : IMaintenanceRequestService
             cancellationToken);
 
         if (request is null)
-            return Result.Failure("Maintenance request not found.");
+            return Result.NotFound("Maintenance request not found.");
 
         if (request.TechnicianId != technicianId)
-            return Result.Failure("This request is not assigned to this technician.");
+            return Result.Forbidden("This request is not assigned to this technician.");
 
         try
         {
@@ -140,7 +140,7 @@ public class MaintenanceRequestService : IMaintenanceRequestService
         }
         catch (InvalidOperationException ex)
         {
-            return Result.Failure(ex.Message);
+            return Result.Conflict(ex.Message);
         }
     }
 
@@ -157,10 +157,10 @@ public class MaintenanceRequestService : IMaintenanceRequestService
             cancellationToken);
 
         if (request is null)
-            return Result.Failure("Maintenance request not found.");
+            return Result.NotFound("Maintenance request not found.");
 
         if (request.TechnicianId != technicianId)
-            return Result.Failure("This request is not assigned to this technician.");
+            return Result.Forbidden("This request is not assigned to this technician.");
 
         try
         {
@@ -172,7 +172,7 @@ public class MaintenanceRequestService : IMaintenanceRequestService
         }
         catch (InvalidOperationException ex)
         {
-            return Result.Failure(ex.Message);
+            return Result.Conflict(ex.Message);
         }
     }
 
@@ -189,10 +189,10 @@ public class MaintenanceRequestService : IMaintenanceRequestService
             cancellationToken);
 
         if (request is null)
-            return Result.Failure("Maintenance request not found.");
+            return Result.NotFound("Maintenance request not found.");
 
         if (request.TechnicianId != technicianId)
-            return Result.Failure("This request is not assigned to this technician.");
+            return Result.Forbidden("This request is not assigned to this technician.");
 
         try
         {
@@ -204,10 +204,10 @@ public class MaintenanceRequestService : IMaintenanceRequestService
         }
         catch (InvalidOperationException ex)
         {
-            return Result.Failure(ex.Message);
+            return Result.Conflict(ex.Message);
         }
     }
-    //يعني الفني يشوف الطلبات المسندة له.
+
     public async Task<Result> ConfirmByCustomerAsync(
         Guid requestId,
         string customerId,
@@ -221,10 +221,10 @@ public class MaintenanceRequestService : IMaintenanceRequestService
             cancellationToken);
 
         if (request is null)
-            return Result.Failure("Maintenance request not found.");
+            return Result.NotFound("Maintenance request not found.");
 
         if (request.CustomerId != customerId)
-            return Result.Failure("This request does not belong to this customer.");
+            return Result.Forbidden("This request does not belong to this customer.");
 
         try
         {
@@ -236,13 +236,13 @@ public class MaintenanceRequestService : IMaintenanceRequestService
         }
         catch (InvalidOperationException ex)
         {
-            return Result.Failure(ex.Message);
+            return Result.Conflict(ex.Message);
         }
     }
 
     public async Task<Result<List<MaintenanceRequestDto>>> GetByTechnicianIdAsync(
-    string technicianId,
-    CancellationToken cancellationToken = default)
+        string technicianId,
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(technicianId))
             return Result<List<MaintenanceRequestDto>>.Failure("Technician id is required.");
@@ -272,12 +272,11 @@ public class MaintenanceRequestService : IMaintenanceRequestService
         return Result<List<MaintenanceRequestDto>>.Success(result);
     }
 
-    //يعني عرض تفاصيل طلب واحد.
     public async Task<Result<MaintenanceRequestDto>> GetByIdAsync(
-    Guid requestId,
-    string? customerId,
-    string? technicianId,
-    CancellationToken cancellationToken = default)
+        Guid requestId,
+        string? customerId,
+        string? technicianId,
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(customerId) && string.IsNullOrWhiteSpace(technicianId))
             return Result<MaintenanceRequestDto>.Failure("Customer id or technician id is required.");
@@ -287,7 +286,7 @@ public class MaintenanceRequestService : IMaintenanceRequestService
             cancellationToken);
 
         if (request is null)
-            return Result<MaintenanceRequestDto>.Failure("Maintenance request not found.");
+            return Result<MaintenanceRequestDto>.NotFound("Maintenance request not found.");
 
         var isCustomerOwner = !string.IsNullOrWhiteSpace(customerId)
             && request.CustomerId == customerId;
@@ -296,7 +295,7 @@ public class MaintenanceRequestService : IMaintenanceRequestService
             && request.TechnicianId == technicianId;
 
         if (!isCustomerOwner && !isAssignedTechnician)
-            return Result<MaintenanceRequestDto>.Failure("You are not allowed to view this request.");
+            return Result<MaintenanceRequestDto>.Forbidden("You are not allowed to view this request.");
 
         var result = new MaintenanceRequestDto
         {

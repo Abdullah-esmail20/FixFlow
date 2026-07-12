@@ -1,4 +1,5 @@
-﻿using FixFlow.Application.DTOs;
+﻿using FixFlow.Application.Common;
+using FixFlow.Application.DTOs;
 using FixFlow.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,10 +29,7 @@ public class MaintenanceRequestsController : ControllerBase
 
         if (result.IsFailure)
         {
-            return BadRequest(new
-            {
-                error = result.Error
-            });
+            return HandleFailure(result);
         }
 
         return Created(
@@ -50,13 +48,9 @@ public class MaintenanceRequestsController : ControllerBase
         var result = await _maintenanceRequestService.GetByCustomerIdAsync(
             customerId,
             cancellationToken);
-
         if (result.IsFailure)
         {
-            return BadRequest(new
-            {
-                error = result.Error
-            });
+            return HandleFailure(result);
         }
 
         return Ok(result.Value);
@@ -72,13 +66,9 @@ public class MaintenanceRequestsController : ControllerBase
             id,
             dto.TechnicianId,
             cancellationToken);
-
         if (result.IsFailure)
         {
-            return BadRequest(new
-            {
-                error = result.Error
-            });
+            return HandleFailure(result);
         }
 
         return NoContent();
@@ -94,13 +84,9 @@ public class MaintenanceRequestsController : ControllerBase
             id,
             technicianId,
             cancellationToken);
-
         if (result.IsFailure)
         {
-            return BadRequest(new
-            {
-                error = result.Error
-            });
+            return HandleFailure(result);
         }
 
         return NoContent();
@@ -119,10 +105,7 @@ public class MaintenanceRequestsController : ControllerBase
 
         if (result.IsFailure)
         {
-            return BadRequest(new
-            {
-                error = result.Error
-            });
+            return HandleFailure(result);
         }
 
         return NoContent();
@@ -141,10 +124,7 @@ public class MaintenanceRequestsController : ControllerBase
 
         if (result.IsFailure)
         {
-            return BadRequest(new
-            {
-                error = result.Error
-            });
+            return HandleFailure(result);
         }
 
         return NoContent();
@@ -163,10 +143,7 @@ public class MaintenanceRequestsController : ControllerBase
 
         if (result.IsFailure)
         {
-            return BadRequest(new
-            {
-                error = result.Error
-            });
+            return HandleFailure(result);
         }
 
         return NoContent();
@@ -184,10 +161,7 @@ public class MaintenanceRequestsController : ControllerBase
 
         if (result.IsFailure)
         {
-            return BadRequest(new
-            {
-                error = result.Error
-            });
+            return HandleFailure(result);
         }
 
         return Ok(result.Value);
@@ -208,12 +182,27 @@ public class MaintenanceRequestsController : ControllerBase
 
         if (result.IsFailure)
         {
-            return BadRequest(new
-            {
-                error = result.Error
-            });
+            return HandleFailure(result);
         }
 
         return Ok(result.Value);
+    }
+
+
+    //احترافيًا نرجع 404 للطلب غير الموجود و403 لعدم الصلاحية.
+    private IActionResult HandleFailure(Result result)
+    {
+        var response = new
+        {
+            error = result.Error
+        };
+
+        return result.ErrorType switch
+        {
+            ErrorType.NotFound => NotFound(response),
+            ErrorType.Forbidden => StatusCode(StatusCodes.Status403Forbidden, response),
+            ErrorType.Conflict => Conflict(response),
+            _ => BadRequest(response)
+        };
     }
 }
