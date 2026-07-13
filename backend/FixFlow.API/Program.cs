@@ -4,11 +4,41 @@ using FixFlow.Infrastructure;
 using FixFlow.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "FixFlow API",
+        Version = "v1",
+        Description = "Maintenance request management API with JWT authentication and role-based authorization."
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Enter JWT token only. Do not write Bearer before the token."
+    });
+
+    options.AddSecurityRequirement(document =>
+    {
+        var securitySchemeReference = new OpenApiSecuritySchemeReference("Bearer");
+
+        return new OpenApiSecurityRequirement
+        {
+            [securitySchemeReference] = []
+        };
+    });
+});
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -63,7 +93,8 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
