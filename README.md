@@ -64,11 +64,93 @@ Created
 
 → CustomerConfirmed
 
+```
+
+\## API Documentation
 
 
 
+Swagger UI is available in development mode at:
 
-Project Structure
+
+
+```text
+
+https://localhost:7153/swagger
+
+
+
+بعدها ننتقل لتحسين احترافي مهم: \*\*إضافة validation للـDTOs\*\* عشان لو المستخدم أرسل بيانات ناقصة يرجع أخطاء واضحة.
+
+
+
+\## Tech Stack
+
+
+
+\- ASP.NET Core Web API
+
+\- C#
+
+\- Entity Framework Core
+
+\- SQL Server LocalDB
+
+\- ASP.NET Core Identity
+
+\- JWT Authentication
+
+\- Clean Architecture
+
+\- Repository Pattern
+
+
+
+\## Architecture
+
+
+
+The backend is structured using Clean Architecture principles:
+
+
+
+\### FixFlow.Domain
+
+
+
+Contains core business entities, enums, and business rules.
+
+
+
+\### FixFlow.Application
+
+
+
+Contains DTOs, interfaces, services, and application logic.
+
+
+
+\### FixFlow.Infrastructure
+
+
+
+Contains database context, repositories, Identity, EF Core configuration, and persistence logic.
+
+
+
+\### FixFlow.API
+
+
+
+Contains API controllers, authentication configuration, and application startup.
+
+
+
+\## Project Structure
+
+
+
+```text
 
 backend/
 
@@ -82,79 +164,45 @@ backend/
 
 └── FixFlow.sln
 
-
-
-Tech Stack
-
-ASP.NET Core Web API
-
-C#
-
-Entity Framework Core
-
-SQL Server LocalDB
-
-ASP.NET Core Identity
-
-JWT Authentication
-
-Clean Architecture
-
-Repository Pattern
-
-Architecture
+```
 
 
 
-The backend is structured using Clean Architecture principles:
+\## API Endpoints
 
 
 
-FixFlow.Domain
+\### Authentication
 
 
 
-Contains core business entities, enums, and business rules.
-
-
-
-FixFlow.Application
-
-
-
-Contains DTOs, interfaces, services, and application logic.
-
-
-
-FixFlow.Infrastructure
-
-
-
-Contains database context, repositories, Identity, EF Core configuration, and persistence logic.
-
-
-
-FixFlow.API
-
-
-
-Contains API controllers, authentication configuration, and application startup.
-
-
-
-API Endpoints
-
-Authentication
+```http
 
 POST /api/auth/register
 
 POST /api/auth/login
 
-Service Categories
+```
+
+
+
+\### Service Categories
+
+
+
+```http
 
 GET /api/categories
 
-Maintenance Requests
+```
+
+
+
+\### Maintenance Requests
+
+
+
+```http
 
 POST /api/maintenance-requests
 
@@ -174,9 +222,15 @@ PUT /api/maintenance-requests/{id}/complete
 
 PUT /api/maintenance-requests/{id}/confirm
 
-Roles
+```
 
-Customer
+
+
+\## Roles
+
+
+
+\### Customer
 
 
 
@@ -184,15 +238,17 @@ Customers can:
 
 
 
-Create maintenance requests
+\- Create maintenance requests
 
-View their own requests
+\- View their own requests
 
-View request details
+\- View request details
 
-Confirm completed requests
+\- Confirm completed requests
 
-Technician
+
+
+\### Technician
 
 
 
@@ -200,17 +256,19 @@ Technicians can:
 
 
 
-View assigned requests
+\- View assigned requests
 
-Accept assigned requests
+\- Accept assigned requests
 
-Start work
+\- Start work
 
-Complete work
+\- Complete work
 
-View assigned request details
+\- View assigned request details
 
-Admin
+
+
+\### Admin
 
 
 
@@ -218,9 +276,11 @@ Admins can:
 
 
 
-Assign technicians to maintenance requests
+\- Assign technicians to maintenance requests
 
-Authentication
+
+
+\## Authentication
 
 
 
@@ -228,15 +288,19 @@ The project uses JWT authentication.
 
 
 
-After login, the API returns a JWT token.
-
-Protected endpoints require this header:
+After login, the API returns a JWT token. Protected endpoints require this header:
 
 
 
-Authorization: Bearer YOUR\_TOKEN\_HERE
+```http
 
-Database
+Authorization: Bearer YOUR\\\_TOKEN\\\_HERE
+
+```
+
+
+
+\## Database
 
 
 
@@ -248,31 +312,79 @@ Default connection string:
 
 
 
-"DefaultConnection": "Server=(localdb)\\\\MSSQLLocalDB;Database=FixFlowDb;Trusted\_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+```json
 
-How to Run
+"DefaultConnection": "Server=(localdb)\\\\\\\\MSSQLLocalDB;Database=FixFlowDb;Trusted\\\_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
 
-Clone the repository.
+```
+
+
+
+\## How to Run
+
+
+
+1\. Clone the repository.
+
+
+
+```bash
 
 git clone https://github.com/Abdullah-esmail20/FixFlow.git
 
-Open the backend folder.
+```
+
+
+
+2\. Open the backend folder.
+
+
+
+```bash
 
 cd FixFlow/backend
 
-Restore packages.
+```
+
+
+
+3\. Restore packages.
+
+
+
+```bash
 
 dotnet restore
 
-Apply database migrations.
+```
+
+
+
+4\. Apply database migrations.
+
+
+
+```bash
 
 dotnet ef database update --project ./FixFlow.Infrastructure/FixFlow.Infrastructure.csproj --startup-project ./FixFlow.API/FixFlow.API.csproj
 
-Run the API.
+```
+
+
+
+5\. Run the API.
+
+
+
+```bash
 
 dotnet run --project ./FixFlow.API/FixFlow.API.csproj
 
-Current Status
+```
+
+
+
+\## Current Status
 
 
 
@@ -280,15 +392,45 @@ The backend currently supports:
 
 
 
-Clean Architecture setup
+\- Clean Architecture setup
 
-Database persistence
+\- Database persistence
 
-Identity tables
+\- Identity tables
 
-JWT authentication
+\- JWT authentication
 
-Role-based authorization
+\- Role-based authorization
 
-Full maintenance request lifecycle.
+\- Full maintenance request lifecycle
+
+
+
+\## Future Improvements
+
+
+
+\- React frontend
+
+\- Swagger UI
+
+\- Refresh tokens
+
+\- Email verification
+
+\- Admin dashboard
+
+\- Technician dashboard
+
+\- Request filtering and pagination
+
+\- Unit tests
+
+
+
+\## Purpose
+
+
+
+This project is built as a portfolio project to demonstrate backend development skills using ASP.NET Core, Clean Architecture, Entity Framework Core, Identity, JWT, and SQL Server.
 
