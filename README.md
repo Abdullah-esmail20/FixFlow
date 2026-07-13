@@ -425,7 +425,12 @@ The backend currently supports:
 \- Request filtering and pagination
 
 \- Unit tests
+## Tests
 
+The project includes unit tests for the domain workflow.
+
+```bash
+dotnet test .\FixFlow.slnx
 
 
 \## Purpose
