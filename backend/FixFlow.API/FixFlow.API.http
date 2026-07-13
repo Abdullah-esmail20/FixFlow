@@ -2,3 +2,16 @@
 @customerToken = PUT_CUSTOMER_TOKEN_HERE
 @adminToken =PUT_adminToken_TOKEN_HERE
 @technicianToken = PUT_technicianToken_TOKEN_HERE
+
+
+###
+
+POST {{FixFlow.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "",
+  "email": "wrong-email",
+  "password": "123",
+  "role": ""
+}
