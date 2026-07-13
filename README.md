@@ -1,6 +1,6 @@
 \# FixFlow
 
-
+[![Backend CI](https://github.com/Abdullah-esmail20/FixFlow/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Abdullah-esmail20/FixFlow/actions/workflows/backend-ci.yml)
 
 FixFlow is a maintenance request management system built with ASP.NET Core Web API and Clean Architecture.
 
