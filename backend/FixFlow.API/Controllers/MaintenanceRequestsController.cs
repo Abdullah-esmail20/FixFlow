@@ -1,6 +1,9 @@
-﻿using FixFlow.Application.Common;
+﻿
+using System.Security.Claims;
+using FixFlow.Application.Common;
 using FixFlow.Application.DTOs;
 using FixFlow.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FixFlow.API.Controllers;
@@ -16,15 +19,17 @@ public class MaintenanceRequestsController : ControllerBase
         _maintenanceRequestService = maintenanceRequestService;
     }
 
+    [Authorize(Roles = "Customer")]
     [HttpPost]
     public async Task<IActionResult> Create(
         [FromBody] CreateMaintenanceRequestDto dto,
-        [FromHeader(Name = "X-Customer-Id")] string customerId,
         CancellationToken cancellationToken)
     {
+        var customerId = GetCurrentUserId();
+
         var result = await _maintenanceRequestService.CreateAsync(
             dto,
-            customerId,
+            customerId ?? string.Empty,
             cancellationToken);
 
         if (result.IsFailure)
@@ -40,14 +45,16 @@ public class MaintenanceRequestsController : ControllerBase
             });
     }
 
+    [Authorize(Roles = "Customer")]
     [HttpGet("my-requests")]
-    public async Task<IActionResult> GetMyRequests(
-        [FromHeader(Name = "X-Customer-Id")] string customerId,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> GetMyRequests(CancellationToken cancellationToken)
     {
+        var customerId = GetCurrentUserId();
+
         var result = await _maintenanceRequestService.GetByCustomerIdAsync(
-            customerId,
+            customerId ?? string.Empty,
             cancellationToken);
+
         if (result.IsFailure)
         {
             return HandleFailure(result);
@@ -56,107 +63,14 @@ public class MaintenanceRequestsController : ControllerBase
         return Ok(result.Value);
     }
 
-    [HttpPut("{id:guid}/assign-technician")]
-    public async Task<IActionResult> AssignTechnician(
-        Guid id,
-        [FromBody] AssignTechnicianDto dto,
-        CancellationToken cancellationToken)
-    {
-        var result = await _maintenanceRequestService.AssignTechnicianAsync(
-            id,
-            dto.TechnicianId,
-            cancellationToken);
-        if (result.IsFailure)
-        {
-            return HandleFailure(result);
-        }
-
-        return NoContent();
-    }
-
-    [HttpPut("{id:guid}/accept")]
-    public async Task<IActionResult> Accept(
-        Guid id,
-        [FromHeader(Name = "X-Technician-Id")] string technicianId,
-        CancellationToken cancellationToken)
-    {
-        var result = await _maintenanceRequestService.AcceptAsync(
-            id,
-            technicianId,
-            cancellationToken);
-        if (result.IsFailure)
-        {
-            return HandleFailure(result);
-        }
-
-        return NoContent();
-    }
-
-    [HttpPut("{id:guid}/start-work")]
-    public async Task<IActionResult> StartWork(
-        Guid id,
-        [FromHeader(Name = "X-Technician-Id")] string technicianId,
-        CancellationToken cancellationToken)
-    {
-        var result = await _maintenanceRequestService.StartWorkAsync(
-            id,
-            technicianId,
-            cancellationToken);
-
-        if (result.IsFailure)
-        {
-            return HandleFailure(result);
-        }
-
-        return NoContent();
-    }
-
-    [HttpPut("{id:guid}/complete")]
-    public async Task<IActionResult> Complete(
-        Guid id,
-        [FromHeader(Name = "X-Technician-Id")] string technicianId,
-        CancellationToken cancellationToken)
-    {
-        var result = await _maintenanceRequestService.CompleteAsync(
-            id,
-            technicianId,
-            cancellationToken);
-
-        if (result.IsFailure)
-        {
-            return HandleFailure(result);
-        }
-
-        return NoContent();
-    }
-
-    [HttpPut("{id:guid}/confirm")]
-    public async Task<IActionResult> ConfirmByCustomer(
-        Guid id,
-        [FromHeader(Name = "X-Customer-Id")] string customerId,
-        CancellationToken cancellationToken)
-    {
-        var result = await _maintenanceRequestService.ConfirmByCustomerAsync(
-            id,
-            customerId,
-            cancellationToken);
-
-        if (result.IsFailure)
-        {
-            return HandleFailure(result);
-        }
-
-        return NoContent();
-    }
-    //يعني الفني يشوف الطلبات المسندة له.
-
+    [Authorize(Roles = "Technician")]
     [HttpGet("my-assigned")]
-    public async Task<IActionResult> GetMyAssignedRequests(
-    [FromHeader(Name = "X-Technician-Id")] string technicianId,
-    CancellationToken cancellationToken)
+    public async Task<IActionResult> GetMyAssignedRequests(CancellationToken cancellationToken)
     {
+        var technicianId = GetCurrentUserId();
+
         var result = await _maintenanceRequestService.GetByTechnicianIdAsync(
-            technicianId,
+            technicianId ?? string.Empty,
             cancellationToken);
 
         if (result.IsFailure)
@@ -166,14 +80,28 @@ public class MaintenanceRequestsController : ControllerBase
 
         return Ok(result.Value);
     }
-    //يعني عرض تفاصيل طلب واحد.
+
+    [Authorize(Roles = "Customer,Technician")]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(
-    Guid id,
-    [FromHeader(Name = "X-Customer-Id")] string? customerId,
-    [FromHeader(Name = "X-Technician-Id")] string? technicianId,
-    CancellationToken cancellationToken)
+        Guid id,
+        CancellationToken cancellationToken)
     {
+        var currentUserId = GetCurrentUserId();
+
+        string? customerId = null;
+        string? technicianId = null;
+
+        if (User.IsInRole("Customer"))
+        {
+            customerId = currentUserId;
+        }
+
+        if (User.IsInRole("Technician"))
+        {
+            technicianId = currentUserId;
+        }
+
         var result = await _maintenanceRequestService.GetByIdAsync(
             id,
             customerId,
@@ -188,8 +116,118 @@ public class MaintenanceRequestsController : ControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id:guid}/assign-technician")]
+    public async Task<IActionResult> AssignTechnician(
+        Guid id,
+        [FromBody] AssignTechnicianDto dto,
+        CancellationToken cancellationToken)
+    {
+        var result = await _maintenanceRequestService.AssignTechnicianAsync(
+            id,
+            dto.TechnicianId,
+            cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Technician")]
+    [HttpPut("{id:guid}/accept")]
+    public async Task<IActionResult> Accept(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var technicianId = GetCurrentUserId();
+
+        var result = await _maintenanceRequestService.AcceptAsync(
+            id,
+            technicianId ?? string.Empty,
+            cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Technician")]
+    [HttpPut("{id:guid}/start-work")]
+    public async Task<IActionResult> StartWork(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var technicianId = GetCurrentUserId();
+
+        var result = await _maintenanceRequestService.StartWorkAsync(
+            id,
+            technicianId ?? string.Empty,
+            cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Technician")]
+    [HttpPut("{id:guid}/complete")]
+    public async Task<IActionResult> Complete(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var technicianId = GetCurrentUserId();
+
+        var result = await _maintenanceRequestService.CompleteAsync(
+            id,
+            technicianId ?? string.Empty,
+            cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Customer")]
+    [HttpPut("{id:guid}/confirm")]
+    public async Task<IActionResult> ConfirmByCustomer(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var customerId = GetCurrentUserId();
+
+        var result = await _maintenanceRequestService.ConfirmByCustomerAsync(
+            id,
+            customerId ?? string.Empty,
+            cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    private string? GetCurrentUserId()
+    {
+        return User.FindFirstValue(ClaimTypes.NameIdentifier);
+    }
+
 
     //احترافيًا نرجع 404 للطلب غير الموجود و403 لعدم الصلاحية.
+
     private IActionResult HandleFailure(Result result)
     {
         var response = new
@@ -206,3 +244,4 @@ public class MaintenanceRequestsController : ControllerBase
         };
     }
 }
+ 
