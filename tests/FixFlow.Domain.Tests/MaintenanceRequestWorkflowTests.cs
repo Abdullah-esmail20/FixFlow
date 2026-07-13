@@ -104,3 +104,11 @@ public class MaintenanceRequestWorkflowTests
         Assert.Throws<InvalidOperationException>(() => request.Complete());
     }
 }
+// These tests verify the maintenance request workflow rules.
+// They make sure that a request moves through the correct statuses
+// and prevents invalid actions, such as completing a request before work starts.
+
+// تختبر هذه الحالات قواعد دورة حياة طلب الصيانة.
+// وتتحقق من انتقال الطلب بين الحالات المسموح بها فقط،
+// مع التأكد من منع العمليات غير المنطقية مثل
+// إكمال الطلب قبل بدء تنفيذ أعمال الصيانة.
