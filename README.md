@@ -435,6 +435,9 @@ dotnet test .\FixFlow.slnx
 
 \## Purpose
 
+<img width="1535" height="567" alt="image" src="https://github.com/user-attachments/assets/52947046-5cd2-4256-8f0a-ba041a2c03b2" />
+
+
 
 
 This project is built as a portfolio project to demonstrate backend development skills using ASP.NET Core, Clean Architecture, Entity Framework Core, Identity, JWT, and SQL Server.
