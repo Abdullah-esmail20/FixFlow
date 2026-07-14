@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FixFlow.Application.Interfaces;
+using FixFlow.Domain.Entities;
+using FixFlow.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
+using FixFlow.Infrastructure.Persistence;
+
+using System;
 using System.Collections.Generic;
 using System.Text;
-
-using FixFlow.Application.Interfaces;
-using FixFlow.Domain.Entities;
-using FixFlow.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace FixFlow.Infrastructure.Repositories;
 
@@ -58,5 +59,53 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<(IReadOnlyList<MaintenanceRequest> Items, int TotalCount)> GetPagedAsync(
+    int pageNumber,
+    int pageSize,
+    RequestStatus? status = null,
+    RequestPriority? priority = null,
+    Guid? serviceCategoryId = null,
+    string? customerId = null,
+    string? technicianId = null)
+    {
+        var query = _context.MaintenanceRequests
+            .AsQueryable();
+
+        if (status.HasValue)
+        {
+            query = query.Where(r => r.Status == status.Value);
+        }
+
+        if (priority.HasValue)
+        {
+            query = query.Where(r => r.Priority == priority.Value);
+        }
+
+        if (serviceCategoryId.HasValue)
+        {
+            query = query.Where(r => r.ServiceCategoryId == serviceCategoryId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(customerId))
+        {
+            query = query.Where(r => r.CustomerId == customerId);
+        }
+
+        if (!string.IsNullOrWhiteSpace(technicianId))
+        {
+            query = query.Where(r => r.TechnicianId == technicianId);
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderByDescending(r => r.CreatedAt)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (items, totalCount);
     }
 }

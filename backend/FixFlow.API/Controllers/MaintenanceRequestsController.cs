@@ -243,5 +243,69 @@ public class MaintenanceRequestsController : ControllerBase
             _ => BadRequest(response)
         };
     }
+    /// <summary>
+    /// أضف endpoint جديد للأدمن:
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
+    [HttpGet("admin")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetPagedForAdmin([FromQuery] MaintenanceRequestQueryDto query)
+    {
+        var result = await _maintenanceRequestService.GetPagedAsync(query);
+
+        if (!result.IsSuccess)
+        {
+            return HandleFailure(result);
+        }
+
+        return Ok(result.Value);
+    }
+    /// <summary>
+    /// وأضف endpoint للعميل مع pagination:
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
+
+    [HttpGet("my-requests/paged")]
+    [Authorize(Roles = "Customer")]
+    public async Task<IActionResult> GetMyRequestsPaged([FromQuery] MaintenanceRequestQueryDto query)
+    {
+        var customerId = GetCurrentUserId();
+
+        var result = await _maintenanceRequestService.GetPagedAsync(
+            query,
+            customerId: customerId);
+
+        if (!result.IsSuccess)
+        {
+            return HandleFailure(result);
+        }
+
+        return Ok(result.Value);
+    }
+    /// <summary>
+    /// //وأضف endpoint للفني:
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
+
+    [HttpGet("my-assigned/paged")]
+    [Authorize(Roles = "Technician")]
+    public async Task<IActionResult> GetMyAssignedRequestsPaged([FromQuery] MaintenanceRequestQueryDto query)
+    {
+        var technicianId = GetCurrentUserId();
+
+        var result = await _maintenanceRequestService.GetPagedAsync(
+            query,
+            technicianId: technicianId);
+
+        if (!result.IsSuccess)
+        {
+            return HandleFailure(result);
+        }
+
+        return Ok(result.Value);
+    }
 }
  

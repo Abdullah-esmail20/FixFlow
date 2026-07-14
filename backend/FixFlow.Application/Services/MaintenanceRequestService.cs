@@ -315,4 +315,47 @@ public class MaintenanceRequestService : IMaintenanceRequestService
 
         return Result<MaintenanceRequestDto>.Success(result);
     }
+
+    public async Task<Result<PagedResult<MaintenanceRequestDto>>> GetPagedAsync(
+     MaintenanceRequestQueryDto query,
+     string? customerId = null,
+     string? technicianId = null)
+    {
+        var (items, totalCount) = await _maintenanceRequestRepository.GetPagedAsync(
+            query.PageNumber,
+            query.PageSize,
+            query.Status,
+            query.Priority,
+            query.ServiceCategoryId,
+            customerId,
+            technicianId);
+
+        var result = new PagedResult<MaintenanceRequestDto>
+        {
+            Items = items.Select(request => new MaintenanceRequestDto
+            {
+                Id = request.Id,
+                Title = request.Title,
+                Description = request.Description,
+                CustomerId = request.CustomerId,
+                TechnicianId = request.TechnicianId,
+                ServiceCategoryId = request.ServiceCategoryId,
+
+
+                Status = request.Status.ToString(),
+                Priority = request.Priority.ToString(),
+
+                Location = request.Location,
+                PreferredDate = request.PreferredDate,
+                CreatedAt = request.CreatedAt,
+                UpdatedAt = request.UpdatedAt
+            }).ToList(),
+
+            PageNumber = query.PageNumber,
+            PageSize = query.PageSize,
+            TotalCount = totalCount
+        };
+
+        return Result<PagedResult<MaintenanceRequestDto>>.Success(result);
+    }
 }

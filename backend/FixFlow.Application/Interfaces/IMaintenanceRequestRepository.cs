@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using FixFlow.Domain.Enums;
 using FixFlow.Domain.Entities;
 
 namespace FixFlow.Application.Interfaces;
@@ -17,4 +17,13 @@ public interface IMaintenanceRequestRepository
     Task AddAsync(MaintenanceRequest request, CancellationToken cancellationToken = default);
 
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<MaintenanceRequest> Items, int TotalCount)> GetPagedAsync(
+    int pageNumber,
+    int pageSize,
+    RequestStatus? status = null,
+    RequestPriority? priority = null,
+    Guid? serviceCategoryId = null,
+    string? customerId = null,
+    string? technicianId = null);
 }
