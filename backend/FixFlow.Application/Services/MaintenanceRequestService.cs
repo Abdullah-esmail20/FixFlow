@@ -322,13 +322,14 @@ public class MaintenanceRequestService : IMaintenanceRequestService
      string? technicianId = null)
     {
         var (items, totalCount) = await _maintenanceRequestRepository.GetPagedAsync(
-            query.PageNumber,
-            query.PageSize,
-            query.Status,
-            query.Priority,
-            query.ServiceCategoryId,
-            customerId,
-            technicianId);
+       query.PageNumber,
+       query.PageSize,
+       query.Status,
+       query.Priority,
+       query.ServiceCategoryId,
+       customerId,
+       technicianId,
+       query.Search);
 
         var result = new PagedResult<MaintenanceRequestDto>
         {

@@ -68,7 +68,8 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
     RequestPriority? priority = null,
     Guid? serviceCategoryId = null,
     string? customerId = null,
-    string? technicianId = null)
+    string? technicianId = null,
+    string? search = null)
     {
         var query = _context.MaintenanceRequests
             .AsQueryable();
@@ -96,6 +97,16 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
         if (!string.IsNullOrWhiteSpace(technicianId))
         {
             query = query.Where(r => r.TechnicianId == technicianId);
+        }
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var searchTerm = search.Trim();
+
+            query = query.Where(r =>
+                r.Title.Contains(searchTerm) ||
+                r.Description.Contains(searchTerm) ||
+                (r.Location != null && r.Location.Contains(searchTerm)));
         }
 
         var totalCount = await query.CountAsync();

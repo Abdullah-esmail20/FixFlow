@@ -16,4 +16,6 @@ public class MaintenanceRequestQueryDto
     public RequestPriority? Priority { get; set; }
 
     public Guid? ServiceCategoryId { get; set; }
+    public string? Search { get; set; }//search
+
 }

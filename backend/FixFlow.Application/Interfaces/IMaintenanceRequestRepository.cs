@@ -19,11 +19,13 @@ public interface IMaintenanceRequestRepository
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 
     Task<(IReadOnlyList<MaintenanceRequest> Items, int TotalCount)> GetPagedAsync(
-    int pageNumber,
-    int pageSize,
-    RequestStatus? status = null,
-    RequestPriority? priority = null,
-    Guid? serviceCategoryId = null,
-    string? customerId = null,
-    string? technicianId = null);
+        int pageNumber,
+        int pageSize,
+        RequestStatus? status = null,
+        RequestPriority? priority = null,
+        Guid? serviceCategoryId = null,
+        string? customerId = null,
+        string? technicianId = null,
+        string? search = null);//search
+
 }

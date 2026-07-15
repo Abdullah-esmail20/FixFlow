@@ -2,6 +2,7 @@
 using FixFlow.Application.DTOs;
 
 
+
 namespace FixFlow.Application.Services;
 
 public interface IMaintenanceRequestService
@@ -52,7 +53,7 @@ public interface IMaintenanceRequestService
     CancellationToken cancellationToken = default);
 
     Task<Result<PagedResult<MaintenanceRequestDto>>> GetPagedAsync(
-    MaintenanceRequestQueryDto query,
-    string? customerId = null,
-    string? technicianId = null);
+        MaintenanceRequestQueryDto query,
+        string? customerId = null,
+        string? technicianId = null);
 }
