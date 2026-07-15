@@ -441,4 +441,11 @@ dotnet test .\FixFlow.slnx
 
 
 This project is built as a portfolio project to demonstrate backend development skills using ASP.NET Core, Clean Architecture, Entity Framework Core, Identity, JWT, and SQL Server.
+## Pagination, Filtering and Search
 
+Admins can retrieve maintenance requests using pagination, filtering, and search.
+
+Example:
+
+```http
+GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10&Search=internet
