@@ -1,458 +1,322 @@
-\# FixFlow
+# FixFlow
 
 [![Backend CI](https://github.com/Abdullah-esmail20/FixFlow/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Abdullah-esmail20/FixFlow/actions/workflows/backend-ci.yml)
 
 FixFlow is a maintenance request management system built with ASP.NET Core Web API and Clean Architecture.
 
-
-
 The system allows customers to create maintenance requests, admins to assign technicians, technicians to manage the work process, and customers to confirm completed services.
 
+## Main Features
 
+- Customer, technician, and admin authentication
+- JWT authentication
+- Role-based authorization
+- Maintenance request creation
+- Technician assignment
+- Maintenance request workflow
+- Customer confirmation
+- Service categories
+- Pagination, filtering, and search
+- Global exception handling middleware
+- DTO validation
+- SQL Server LocalDB
+- Entity Framework Core migrations
+- ASP.NET Core Identity
+- Domain unit tests
+- GitHub Actions CI
 
-\## Main Features
-
-
-
-\- Customer registration and login
-
-\- Technician registration and login
-
-\- Admin registration and login
-
-\- JWT authentication
-
-\- Role-based authorization
-
-\- Maintenance request creation
-
-\- Assign technician to request
-
-\- Technician workflow:
-
-&#x20; - Accept request
-
-&#x20; - Start work
-
-&#x20; - Complete work
-
-\- Customer confirmation
-
-\- Service categories
-
-\- SQL Server database
-
-\- Entity Framework Core migrations
-
-
-
-\## Maintenance Request Workflow
-
-
+## Maintenance Request Workflow
 
 ```text
-
 Created
-
 → Assigned
-
 → Accepted
-
 → InProgress
-
 → Completed
-
 → CustomerConfirmed
-
 ```
 
-\## API Documentation
+## Tech Stack
 
+- ASP.NET Core Web API
+- C#
+- Entity Framework Core
+- SQL Server LocalDB
+- ASP.NET Core Identity
+- JWT Authentication
+- Clean Architecture
+- Repository Pattern
+- xUnit
+- GitHub Actions
 
+## Architecture
 
-Swagger UI is available in development mode at:
+The backend is structured using Clean Architecture principles.
 
-
-
-```text
-
-https://localhost:7153/swagger
-
-
-
-بعدها ننتقل لتحسين احترافي مهم: \*\*إضافة validation للـDTOs\*\* عشان لو المستخدم أرسل بيانات ناقصة يرجع أخطاء واضحة.
-
-
-
-\## Tech Stack
-
-
-
-\- ASP.NET Core Web API
-
-\- C#
-
-\- Entity Framework Core
-
-\- SQL Server LocalDB
-
-\- ASP.NET Core Identity
-
-\- JWT Authentication
-
-\- Clean Architecture
-
-\- Repository Pattern
-
-
-
-\## Architecture
-
-
-
-The backend is structured using Clean Architecture principles:
-
-
-
-\### FixFlow.Domain
-
-
+### FixFlow.Domain
 
 Contains core business entities, enums, and business rules.
 
+### FixFlow.Application
 
+Contains DTOs, interfaces, services, application logic, validation models, and shared result objects.
 
-\### FixFlow.Application
+### FixFlow.Infrastructure
 
+Contains database context, repositories, Identity, EF Core configuration, persistence logic, and seeders.
 
+### FixFlow.API
 
-Contains DTOs, interfaces, services, and application logic.
+Contains API controllers, authentication configuration, Swagger configuration, middleware, and application startup.
 
-
-
-\### FixFlow.Infrastructure
-
-
-
-Contains database context, repositories, Identity, EF Core configuration, and persistence logic.
-
-
-
-\### FixFlow.API
-
-
-
-Contains API controllers, authentication configuration, and application startup.
-
-
-
-\## Project Structure
-
-
+## Project Structure
 
 ```text
-
-backend/
-
-├── FixFlow.API
-
-├── FixFlow.Application
-
-├── FixFlow.Domain
-
-├── FixFlow.Infrastructure
-
-└── FixFlow.sln
-
+FixFlow/
+├── backend/
+│   ├── FixFlow.API
+│   ├── FixFlow.Application
+│   ├── FixFlow.Domain
+│   └── FixFlow.Infrastructure
+├── tests/
+│   └── FixFlow.Domain.Tests
+├── .github/
+│   └── workflows/
+│       └── backend-ci.yml
+├── FixFlow.slnx
+└── README.md
 ```
 
+## API Documentation
 
+Swagger UI is available in development mode at:
 
-\## API Endpoints
+```text
+https://localhost:7153/swagger
+```
 
+You can use Swagger to explore and test the API endpoints.
 
+## API Endpoints
 
-\### Authentication
-
-
+### Authentication
 
 ```http
-
 POST /api/auth/register
-
 POST /api/auth/login
-
 ```
 
-
-
-\### Service Categories
-
-
+### Service Categories
 
 ```http
-
 GET /api/categories
-
 ```
 
-
-
-\### Maintenance Requests
-
-
+### Maintenance Requests
 
 ```http
-
 POST /api/maintenance-requests
-
 GET /api/maintenance-requests/my-requests
-
 GET /api/maintenance-requests/my-assigned
-
 GET /api/maintenance-requests/{id}
-
 PUT /api/maintenance-requests/{id}/assign-technician
-
 PUT /api/maintenance-requests/{id}/accept
-
 PUT /api/maintenance-requests/{id}/start-work
-
 PUT /api/maintenance-requests/{id}/complete
-
 PUT /api/maintenance-requests/{id}/confirm
-
 ```
 
+### Admin Pagination, Filtering, and Search
 
+```http
+GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10
+GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10&Search=internet
+GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10&Status=Completed
+```
 
-\## Roles
+Supported query parameters:
 
+- `PageNumber`
+- `PageSize`
+- `Status`
+- `Priority`
+- `ServiceCategoryId`
+- `Search`
 
+Search works on:
 
-\### Customer
+- `Title`
+- `Description`
+- `Location`
 
+## Roles
 
+### Customer
 
 Customers can:
 
+- Create maintenance requests
+- View their own requests
+- View request details
+- Confirm completed requests
 
-
-\- Create maintenance requests
-
-\- View their own requests
-
-\- View request details
-
-\- Confirm completed requests
-
-
-
-\### Technician
-
-
+### Technician
 
 Technicians can:
 
+- View assigned requests
+- Accept assigned requests
+- Start work
+- Complete work
+- View assigned request details
 
-
-\- View assigned requests
-
-\- Accept assigned requests
-
-\- Start work
-
-\- Complete work
-
-\- View assigned request details
-
-
-
-\### Admin
-
-
+### Admin
 
 Admins can:
 
+- View maintenance requests
+- Search and filter maintenance requests
+- Assign technicians to maintenance requests
 
-
-\- Assign technicians to maintenance requests
-
-
-
-\## Authentication
-
-
+## Authentication
 
 The project uses JWT authentication.
 
-
-
 After login, the API returns a JWT token. Protected endpoints require this header:
 
-
-
 ```http
-
-Authorization: Bearer YOUR\\\_TOKEN\\\_HERE
-
+Authorization: Bearer YOUR_TOKEN_HERE
 ```
 
+In Swagger, click **Authorize** and paste the JWT token only. Do not write `Bearer` manually.
 
-
-\## Database
-
-
+## Database
 
 The project uses SQL Server LocalDB.
 
-
-
 Default connection string:
 
-
-
 ```json
-
-"DefaultConnection": "Server=(localdb)\\\\\\\\MSSQLLocalDB;Database=FixFlowDb;Trusted\\\_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
-
+"DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=FixFlowDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
 ```
 
+## Default Development Admin
 
+In development mode, the system can seed a default admin user automatically.
 
-\## How to Run
+The admin email is configured in `appsettings.Development.json`.
 
-
-
-1\. Clone the repository.
-
-
+The admin password should be configured locally using User Secrets:
 
 ```bash
+cd backend/FixFlow.API
+dotnet user-secrets init
+dotnet user-secrets set "AdminSeed:Password" "YOUR_LOCAL_PASSWORD"
+```
 
+This keeps the password outside the repository.
+
+## How to Run
+
+1. Clone the repository.
+
+```bash
 git clone https://github.com/Abdullah-esmail20/FixFlow.git
-
 ```
 
-
-
-2\. Open the backend folder.
-
-
+2. Open the project folder.
 
 ```bash
-
-cd FixFlow/backend
-
+cd FixFlow
 ```
 
-
-
-3\. Restore packages.
-
-
+3. Restore packages.
 
 ```bash
-
-dotnet restore
-
+dotnet restore FixFlow.slnx
 ```
 
-
-
-4\. Apply database migrations.
-
-
+4. Apply database migrations.
 
 ```bash
-
-dotnet ef database update --project ./FixFlow.Infrastructure/FixFlow.Infrastructure.csproj --startup-project ./FixFlow.API/FixFlow.API.csproj
-
+dotnet ef database update --project ./backend/FixFlow.Infrastructure/FixFlow.Infrastructure.csproj --startup-project ./backend/FixFlow.API/FixFlow.API.csproj
 ```
 
-
-
-5\. Run the API.
-
-
+5. Run the API.
 
 ```bash
-
-dotnet run --project ./FixFlow.API/FixFlow.API.csproj
-
+dotnet run --project ./backend/FixFlow.API/FixFlow.API.csproj
 ```
 
+6. Open Swagger.
 
+```text
+https://localhost:7153/swagger
+```
 
-\## Current Status
-
-
-
-The backend currently supports:
-
-
-
-\- Clean Architecture setup
-
-\- Database persistence
-
-\- Identity tables
-
-\- JWT authentication
-
-\- Role-based authorization
-
-\- Full maintenance request lifecycle
-
-
-
-\## Future Improvements
-
-
-
-\- React frontend
-
-\- Swagger UI
-
-\- Refresh tokens
-
-\- Email verification
-
-\- Admin dashboard
-
-\- Technician dashboard
-
-\- Request filtering and pagination
-
-\- Unit tests
 ## Tests
 
 The project includes unit tests for the domain workflow.
 
+Run tests with:
+
 ```bash
-dotnet test .\FixFlow.slnx
+dotnet test FixFlow.slnx
+```
 
+Tested workflow rules include:
 
-\## Purpose
+- Created request can be assigned
+- Assigned request can be accepted
+- Accepted request can start work
+- In-progress request can be completed
+- Completed request can be confirmed by customer
+- Invalid workflow transitions are rejected
 
-<img width="1535" height="567" alt="image" src="https://github.com/user-attachments/assets/52947046-5cd2-4256-8f0a-ba041a2c03b2" />
+## GitHub Actions
 
+The project includes a Backend CI workflow.
 
+On every push to `master`, GitHub Actions runs:
 
+- Restore
+- Build
+- Test
 
-This project is built as a portfolio project to demonstrate backend development skills using ASP.NET Core, Clean Architecture, Entity Framework Core, Identity, JWT, and SQL Server.
-## Pagination, Filtering and Search
-
-Admins can retrieve maintenance requests using pagination, filtering, and search.
-
-Example:
-
-```http
-GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10&Search=internet
-## Default Development Admin
-
-In development mode, the system seeds a default admin user automatically.
+Workflow file:
 
 ```text
-Email: admin@fixflow.com
-Password: Admin123!
+.github/workflows/backend-ci.yml
+```
+
+## Current Status
+
+The backend currently supports:
+
+- Clean Architecture setup
+- Database persistence
+- Identity tables
+- JWT authentication
+- Role-based authorization
+- Swagger documentation
+- DTO validation
+- Global exception handling
+- Full maintenance request lifecycle
+- Pagination, filtering, and search
+- Domain unit tests
+- GitHub Actions CI
+
+## Future Improvements
+
+- React frontend
+- Refresh tokens
+- Email verification
+- Admin dashboard
+- Technician dashboard
+- Request sorting
+- Advanced reporting
+- Deployment
+
+## Purpose
+
+This project is built as a portfolio project to demonstrate backend development skills using ASP.NET Core, Clean Architecture, Entity Framework Core, Identity, JWT, SQL Server, unit testing, and CI automation.
