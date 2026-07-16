@@ -449,3 +449,10 @@ Example:
 
 ```http
 GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10&Search=internet
+## Default Development Admin
+
+In development mode, the system seeds a default admin user automatically.
+
+```text
+Email: admin@fixflow.com
+Password: Admin123!
