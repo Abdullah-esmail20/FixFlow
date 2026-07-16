@@ -22,8 +22,8 @@ public static class DefaultIdentitySeeder
 
         var adminFullName = configuration["AdminSeed:FullName"] ?? "System Admin";
         var adminEmail = configuration["AdminSeed:Email"] ?? "admin@fixflow.com";
-        var adminPassword = configuration["AdminSeed:Password"] ?? "Admin123!";
-
+        var adminPassword = configuration["AdminSeed:Password"]
+            ?? throw new InvalidOperationException("Default admin password is not configured.");
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
         if (adminUser is null)
