@@ -1,11 +1,13 @@
-using System.Text;
+using FixFlow.API.Middleware;
 using FixFlow.Application;
 using FixFlow.Infrastructure;
+using FixFlow.Infrastructure.Identity;
 using FixFlow.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using FixFlow.API.Middleware;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +87,17 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await DatabaseSeeder.SeedAsync(dbContext);
+
+    if (app.Environment.IsDevelopment())
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        await DefaultIdentitySeeder.SeedAsync(
+            userManager,
+            roleManager,
+            app.Configuration);
+    }
 }
 
 if (app.Environment.IsDevelopment())
