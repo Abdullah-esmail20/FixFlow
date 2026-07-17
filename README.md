@@ -11,17 +11,24 @@ The system allows customers to create maintenance requests, admins to assign tec
 - Customer, technician, and admin authentication
 - JWT authentication
 - Role-based authorization
+- Swagger documentation with JWT support
 - Maintenance request creation
 - Technician assignment
-- Maintenance request workflow
+- Full maintenance request workflow
 - Customer confirmation
 - Service categories
-- Pagination, filtering, and search
-- Global exception handling middleware
+- Pagination
+- Filtering
+- Search
+- Sorting
 - DTO validation
+- Standard validation error responses
+- Standard API response wrapper
+- Global exception handling middleware
+- Default development admin seeding
+- User Secrets for sensitive configuration
 - SQL Server LocalDB
 - Entity Framework Core migrations
-- ASP.NET Core Identity
 - Domain unit tests
 - GitHub Actions CI
 
@@ -47,6 +54,7 @@ Created
 - Clean Architecture
 - Repository Pattern
 - xUnit
+- Swagger / OpenAPI
 - GitHub Actions
 
 ## Architecture
@@ -67,7 +75,7 @@ Contains database context, repositories, Identity, EF Core configuration, persis
 
 ### FixFlow.API
 
-Contains API controllers, authentication configuration, Swagger configuration, middleware, and application startup.
+Contains API controllers, authentication configuration, Swagger configuration, middleware, response wrappers, and application startup.
 
 ## Project Structure
 
@@ -96,6 +104,36 @@ https://localhost:7153/swagger
 ```
 
 You can use Swagger to explore and test the API endpoints.
+
+For protected endpoints, click **Authorize** and paste the JWT token only.
+
+Do not write `Bearer` manually.
+
+## API Response Format
+
+Successful responses use a standard response wrapper:
+
+```json
+{
+  "success": true,
+  "message": "Request completed successfully.",
+  "data": {},
+  "errors": []
+}
+```
+
+Validation errors also use a standard format:
+
+```json
+{
+  "success": false,
+  "message": "Validation failed.",
+  "data": null,
+  "errors": [
+    "Email: The Email field is not a valid e-mail address."
+  ]
+}
+```
 
 ## API Endpoints
 
@@ -126,12 +164,13 @@ PUT /api/maintenance-requests/{id}/complete
 PUT /api/maintenance-requests/{id}/confirm
 ```
 
-### Admin Pagination, Filtering, and Search
+### Admin Pagination, Filtering, Search, and Sorting
 
 ```http
 GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10
 GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10&Search=internet
 GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10&Status=Completed
+GET /api/maintenance-requests/admin?PageNumber=1&PageSize=10&SortBy=CreatedAt&SortDirection=desc
 ```
 
 Supported query parameters:
@@ -142,12 +181,27 @@ Supported query parameters:
 - `Priority`
 - `ServiceCategoryId`
 - `Search`
+- `SortBy`
+- `SortDirection`
 
 Search works on:
 
 - `Title`
 - `Description`
 - `Location`
+
+Supported sorting fields:
+
+- `CreatedAt`
+- `UpdatedAt`
+- `Title`
+- `Status`
+- `Priority`
+
+Supported sort directions:
+
+- `asc`
+- `desc`
 
 ## Roles
 
@@ -175,7 +229,7 @@ Technicians can:
 Admins can:
 
 - View maintenance requests
-- Search and filter maintenance requests
+- Search, filter, sort, and paginate maintenance requests
 - Assign technicians to maintenance requests
 
 ## Authentication
@@ -187,8 +241,6 @@ After login, the API returns a JWT token. Protected endpoints require this heade
 ```http
 Authorization: Bearer YOUR_TOKEN_HERE
 ```
-
-In Swagger, click **Authorize** and paste the JWT token only. Do not write `Bearer` manually.
 
 ## Database
 
@@ -300,9 +352,13 @@ The backend currently supports:
 - Role-based authorization
 - Swagger documentation
 - DTO validation
+- Standard validation error responses
+- Standard API response wrapper
 - Global exception handling
 - Full maintenance request lifecycle
-- Pagination, filtering, and search
+- Pagination, filtering, search, and sorting
+- Default development admin seeding
+- User Secrets
 - Domain unit tests
 - GitHub Actions CI
 
@@ -313,10 +369,10 @@ The backend currently supports:
 - Email verification
 - Admin dashboard
 - Technician dashboard
-- Request sorting
 - Advanced reporting
 - Deployment
+- Integration tests
 
 ## Purpose
 
-This project is built as a portfolio project to demonstrate backend development skills using ASP.NET Core, Clean Architecture, Entity Framework Core, Identity, JWT, SQL Server, unit testing, and CI automation.
+This project is built as a portfolio project to demonstrate backend development skills using ASP.NET Core, Clean Architecture, Entity Framework Core, Identity, JWT, SQL Server, unit testing, secure configuration, and CI automation.
