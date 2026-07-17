@@ -62,14 +62,16 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
     }
 
     public async Task<(IReadOnlyList<MaintenanceRequest> Items, int TotalCount)> GetPagedAsync(
-    int pageNumber,
-    int pageSize,
-    RequestStatus? status = null,
-    RequestPriority? priority = null,
-    Guid? serviceCategoryId = null,
-    string? customerId = null,
-    string? technicianId = null,
-    string? search = null)
+       int pageNumber,
+       int pageSize,
+       RequestStatus? status = null,
+       RequestPriority? priority = null,
+       Guid? serviceCategoryId = null,
+       string? customerId = null,
+       string? technicianId = null,
+       string? search = null, //search
+       string? sortBy = null,//Sorting
+       string? sortDirection = "desc")//Sorting
     {
         var query = _context.MaintenanceRequests
             .AsQueryable();
@@ -111,12 +113,39 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
 
         var totalCount = await query.CountAsync();
 
+        var isDescending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+
+        query = sortBy?.ToLower() switch
+        {
+            "title" => isDescending
+                ? query.OrderByDescending(r => r.Title)
+                : query.OrderBy(r => r.Title),
+
+            "status" => isDescending
+                ? query.OrderByDescending(r => r.Status)
+                : query.OrderBy(r => r.Status),
+
+            "priority" => isDescending
+                ? query.OrderByDescending(r => r.Priority)
+                : query.OrderBy(r => r.Priority),
+
+            "updatedat" => isDescending
+                ? query.OrderByDescending(r => r.UpdatedAt)
+                : query.OrderBy(r => r.UpdatedAt),
+
+            "createdat" => isDescending
+                ? query.OrderByDescending(r => r.CreatedAt)
+                : query.OrderBy(r => r.CreatedAt),
+
+            _ => query.OrderByDescending(r => r.CreatedAt)
+        };
+
         var items = await query
-            .OrderByDescending(r => r.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
         return (items, totalCount);
     }
+
 }

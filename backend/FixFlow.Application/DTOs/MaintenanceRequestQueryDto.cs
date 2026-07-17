@@ -18,4 +18,8 @@ public class MaintenanceRequestQueryDto
     public Guid? ServiceCategoryId { get; set; }
     public string? Search { get; set; }//search
 
+    public string? SortBy { get; set; } = "CreatedAt"; //Sorting
+
+    public string? SortDirection { get; set; } = "desc"; //Sorting
+
 }

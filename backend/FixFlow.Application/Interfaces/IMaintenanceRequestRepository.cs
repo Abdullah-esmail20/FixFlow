@@ -26,6 +26,8 @@ public interface IMaintenanceRequestRepository
         Guid? serviceCategoryId = null,
         string? customerId = null,
         string? technicianId = null,
-        string? search = null);//search
+        string? search = null, //search
+        string? sortBy = null, //Sorting
+        string? sortDirection = "desc"); // Sorting direction: "asc" or "desc"
 
 }
