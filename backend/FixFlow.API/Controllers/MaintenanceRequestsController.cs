@@ -1,4 +1,4 @@
-﻿
+﻿using FixFlow.API.Responses;
 using System.Security.Claims;
 using FixFlow.Application.Common;
 using FixFlow.Application.DTOs;
@@ -259,7 +259,9 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return Ok(result.Value);
+        return Ok(ApiResponse<object>.Ok(
+            result.Value!,
+            "Maintenance requests retrieved successfully."));
     }
     /// <summary>
     /// وأضف endpoint للعميل مع pagination:
@@ -307,5 +309,9 @@ public class MaintenanceRequestsController : ControllerBase
 
         return Ok(result.Value);
     }
+
+
+
+
 }
  
