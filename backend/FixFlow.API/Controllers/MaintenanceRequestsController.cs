@@ -38,11 +38,11 @@ public class MaintenanceRequestsController : ControllerBase
         }
 
         return Created(
-            $"api/maintenance-requests/{result.Value}",
-            new
-            {
-                id = result.Value
-            });
+     $"api/maintenance-requests/{result.Value}",
+     ApiResponse<Guid>.Ok(
+         result.Value,
+         "Maintenance request created successfully."));
+
     }
 
     [Authorize(Roles = "Customer")]
@@ -60,7 +60,9 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return Ok(result.Value);
+        return Ok(ApiResponse<object>.Ok(
+            result.Value!,
+            "Customer maintenance requests retrieved successfully."));
     }
 
     [Authorize(Roles = "Technician")]
@@ -78,7 +80,9 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return Ok(result.Value);
+        return Ok(ApiResponse<object>.Ok(
+            result.Value!,
+            "Assigned maintenance requests retrieved successfully."));
     }
 
     [Authorize(Roles = "Customer,Technician")]
@@ -113,7 +117,9 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return Ok(result.Value);
+        return Ok(ApiResponse<object>.Ok(
+            result.Value!,
+            "Maintenance request retrieved successfully."));
     }
 
     [Authorize(Roles = "Admin")]
@@ -133,7 +139,7 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return NoContent();
+        return Ok(ApiResponse.Ok("Technician assigned successfully."));
     }
 
     [Authorize(Roles = "Technician")]
@@ -154,7 +160,7 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return NoContent();
+        return Ok(ApiResponse.Ok("Request accepted successfully."));
     }
 
     [Authorize(Roles = "Technician")]
@@ -175,7 +181,7 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return NoContent();
+        return Ok(ApiResponse.Ok("Work started successfully."));
     }
 
     [Authorize(Roles = "Technician")]
@@ -196,7 +202,7 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return NoContent();
+        return Ok(ApiResponse.Ok("Work completed successfully."));
     }
 
     [Authorize(Roles = "Customer")]
@@ -217,7 +223,7 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return NoContent();
+        return Ok(ApiResponse.Ok("Request confirmed by customer successfully."));
     }
 
     private string? GetCurrentUserId()
@@ -284,7 +290,9 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return Ok(result.Value);
+        return Ok(ApiResponse<object>.Ok(
+            result.Value!,
+            "Customer paged maintenance requests retrieved successfully."));
     }
     /// <summary>
     /// //وأضف endpoint للفني:
@@ -307,7 +315,9 @@ public class MaintenanceRequestsController : ControllerBase
             return HandleFailure(result);
         }
 
-        return Ok(result.Value);
+        return Ok(ApiResponse<object>.Ok(
+            result.Value!,
+            "Technician paged maintenance requests retrieved successfully."));
     }
 
 

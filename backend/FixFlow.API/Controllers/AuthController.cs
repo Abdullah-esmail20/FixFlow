@@ -2,6 +2,7 @@
 using FixFlow.Application.DTOs;
 using FixFlow.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using FixFlow.API.Responses;
 
 namespace FixFlow.API.Controllers;
 
@@ -26,7 +27,9 @@ public class AuthController : ControllerBase
         if (result.IsFailure)
             return HandleFailure(result);
 
-        return Ok(result.Value);
+        return Ok(ApiResponse<object>.Ok(
+    result.Value!,
+    "User registered successfully."));
     }
 
     [HttpPost("login")]
@@ -39,7 +42,9 @@ public class AuthController : ControllerBase
         if (result.IsFailure)
             return HandleFailure(result);
 
-        return Ok(result.Value);
+        return Ok(ApiResponse<object>.Ok(
+            result.Value!,
+            "Login successful."));
     }
 
     private IActionResult HandleFailure(Result result)
