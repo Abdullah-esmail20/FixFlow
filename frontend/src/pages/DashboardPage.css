@@ -51,3 +51,30 @@
 .dashboard-card p {
   color: #6b7280;
 }
+
+.requests-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.requests-table th,
+.requests-table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.requests-table th {
+  background: #f9fafb;
+  font-weight: 700;
+}
+
+.error-message {
+  margin-top: 16px;
+  padding: 12px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 10px;
+}
